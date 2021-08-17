@@ -18,9 +18,11 @@ namespace AspnetCoreWithBugs.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+            List<Product> products = await _context.Product.ToListAsync();
+            return View(products);
         }
 
         public IActionResult Create()
@@ -34,6 +36,7 @@ namespace AspnetCoreWithBugs.Controllers
             if (ModelState.IsValid)
             {
                 await _context.AddAsync(product);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -80,6 +83,7 @@ namespace AspnetCoreWithBugs.Controllers
         {
             var product = await _context.Product.FindAsync(id);
             _context.Product.Remove(product);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
